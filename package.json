@@ -1,0 +1,21 @@
+{
+  "name": "aws-pricing-api",
+  "version": "1.0.0",
+  "description": "aws pricing api",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/debasishbsws/aws-pricing-api"
+  },
+  "author": "debasishbsws",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "download": "^8.0.0",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.1"
+  }
+}
