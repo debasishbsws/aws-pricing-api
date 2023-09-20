@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-// const mysql = require("mysql2");
+const db = require(__dirname+"/api/db/connectDB");
+
 const download = require('download');
 
 
@@ -10,6 +11,9 @@ console.log(path.join(__dirname, "indexList.json"));
 //read the indexList.json file
 const ProductObject = JSON.parse(fs.readFileSync(path.join(__dirname, "indexList.json"), "utf-8")).offers;
 
+
+// I have hardcoded the regeions for now as I do not want to 
+// download all the index files from all the regeions
 const Regeions = {
     "US East (N. Virginia)" : "us-east-1",
     // "AWS GovCloud (US)" : "us-gov-west-1",
@@ -58,6 +62,7 @@ async function createTable(productName, attributes) {
     }
     sql += ", PRIMARY KEY (`id`));";
     // call to execute the query
+    db.executeQuery(sql, null);
     // console.log(sql);
 }
 
@@ -86,6 +91,7 @@ async function fillProductsTables(productName, products, regeion) {
         sql += ");";
 
         // call to execute the query
+        db.executeQuery(sql, null);
         // console.log(sql);
     }
 }
@@ -106,10 +112,11 @@ async function fillTermsTable(terms) {
         // console.log(`Unit: ${unit}`);
         // console.log(`Price Per Unit (USD): ${pricePerUnitUSD}`);
 
-        var sql = "INSERT INTO terms (sku, offer_term_code, unit, price_per_unit, description)";
+        var sql = "INSERT INTO terms (`sku`, `offer_term_code`, `unit`, `price_per_unit`, `description`)";
         sql += "VALUES ('" + sku + "', '" + offerTermCode + "', '" + unit + "', '" + pricePerUnitUSD + "', '" + description + "');";
 
         // call to execute the query
+        db.executeQuery(sql, null);
         // console.log(sql);
     }
 
@@ -117,15 +124,24 @@ async function fillTermsTable(terms) {
 
 for(const regeion in Regeions){
     for(const serviceName in ProductObject){
-        if(serviceName != "AmazonS3"){
+        if(!(serviceName == "AmazonS3" || serviceName == "AmazonEC2")){
             continue;
         }
         downloadIndexFile(serviceName,Regeions[regeion]).then((filePath) => {
             const serviceJson = JSON.parse(fs.readFileSync(path.join(filePath), "utf-8"));
-            
-            // fillProductsTables(serviceJson.offerCode, serviceJson.products, Regeions[regeion]);
+            db.executeQuery("INSERT INTO region_service (`service_code`, `region_code`) VALUES ('" + serviceJson.offerCode + "', '" + Regeions[regeion] + "');", null);
+            fillProductsTables(serviceJson.offerCode, serviceJson.products, Regeions[regeion]);
             fillTermsTable(serviceJson.terms.OnDemand);
+            
         });
     }
 }
+
+// wait for 10 seconds to finish the database connection
+setTimeout(() => {
+    process.exit();
+}
+, 15000);
+
+
 

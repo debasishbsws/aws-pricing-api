@@ -7,11 +7,11 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: dev
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: devDB
+      MYSQL_DATABASE: aws_pricing
     ports:
       - '3306:3306'
     volumes:
-      - ./dev-database.sql:/docker-entrypoint-initdb.d/01.sql
+      - ./dev-database-entry.sql:/docker-entrypoint-initdb.d/01.sql
       - mysqldata:/var/lib/mysql
 
   phpmyadmin:
@@ -24,7 +24,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: dev
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: devDB
+      MYSQL_DATABASE: aws_pricing
     depends_on:
       - mysql
 
