@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `region_service` (
   PRIMARY KEY (service_code, region_code)
 );
 
-CREATE TABLE IF NOT EXISTS `terms` (
+CREATE TABLE IF NOT EXISTS `pricing_terms` (
   `sku` VARCHAR(255),
   `offer_term_code` VARCHAR(255),
   `unit` VARCHAR(255),
@@ -24,8 +24,6 @@ CREATE TABLE IF NOT EXISTS `terms` (
   `description` TEXT,
   PRIMARY KEY (`sku`, `offer_term_code`)
 );
--- INSERT INTO terms (`sku`, `offer_term_code`, `unit`, `price_per_unit`, `description`)
--- VALUES ('82TFRVR9729PGTNP', 'JRTCKXETXF', 'GB-Mo', '0.0009900000', '$0.00099 per Gigabyte Month for TimedStorage-INT-DAA-ByteHrs:IntelligentTieringDAAStorage in US East (N. Virginia)');
 
 
 -- INSERT INTO `region` (`region_code`, `region_name`)

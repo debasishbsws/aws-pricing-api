@@ -34,7 +34,7 @@ async function executeQuery(query, params) {
                     return reject(queryError); // Reject the promise with the query error
                 }
 
-                console.log(results);
+                // console.log(results);
                 resolve(results); // Resolve the promise with the query results
             });
         });

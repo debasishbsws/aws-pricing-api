@@ -22,14 +22,6 @@
       "versionIndexUrl" : "/offers/v1.0/aws/AmazonS3/index.json",
       "currentVersionUrl" : "/offers/v1.0/aws/AmazonS3/current/index.json",
       "currentRegionIndexUrl" : "/offers/v1.0/aws/AmazonS3/current/region_index.json"
-    },
-    "AWSLambda" : {
-      "offerCode" : "AWSLambda",
-      "versionIndexUrl" : "/offers/v1.0/aws/AWSLambda/index.json",
-      "currentVersionUrl" : "/offers/v1.0/aws/AWSLambda/current/index.json",
-      "currentRegionIndexUrl" : "/offers/v1.0/aws/AWSLambda/current/region_index.json",
-      "savingsPlanVersionIndexUrl" : "/savingsPlan/v1.0/aws/AWSComputeSavingsPlan/current/index.json",
-      "currentSavingsPlanIndexUrl" : "/savingsPlan/v1.0/aws/AWSComputeSavingsPlan/current/region_index.json"
     }
   }
 }
