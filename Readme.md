@@ -28,6 +28,8 @@ It creates tables for each of the services in the database and fill them up with
 I have though of creating a single table for all the services but it will be harder to retrieve data with attribute filtering, as in that sinario we have to search and filter from the json.
 I get to know about JSON Contain function in mysql which is very handy in this case. But I didn't know about it at the time of designing the database.
 
+I have reduce the number of services in the indexList.json file as It take many hours to fetch all the data. So I have only included few services in the indexList.json file. You can add more services to it if you want to fetch more data. also in fetchData.js file there are only two regions included. You can add more regions to it if you want to fetch more data.
+
 > Now for some services that has a lot of fields like ec2, rds, etc. It gitving me some error. I have to increase the max_allowed_packet size in mysql. But I didn't know how to do it in docker for now. So I have to skip those services for now. I will fix it soon.
 
 > Note this process may take a lot of time. As it is fetching files from aws and then parsing them and then inserting them into the database. At the end of data insertion we have to kill the process as it is not exiting on its own `Ctrl + C`. (I will fix it soon.)
