@@ -23,7 +23,7 @@ app.get("/checkdb", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-    let ans = await db.executeQuery("SELECT * FROM region", null)
+    let ans = "Welcome to the API of the Cloud Services Catalogue\n";
     res.send(ans);
 });
 
