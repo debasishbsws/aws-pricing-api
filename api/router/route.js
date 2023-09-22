@@ -5,7 +5,7 @@ const controller = require("../controllers/controller");
 
 const router = express.Router();
 
-router.get("/region", async (req, res) => {
+router.get("/regions", async (req, res) => {
     try {
         controller.getRegions().then((result) => {
             res.status(200).send(result);

@@ -17,7 +17,7 @@ const ProductObject = JSON.parse(fs.readFileSync(path.join(__dirname, "indexList
 const Regeions = {
     "US East (N. Virginia)" : "us-east-1",
     // "AWS GovCloud (US)" : "us-gov-west-1",
-    // "Asia Pacific (Mumbai)" : "ap-south-1",
+    "Asia Pacific (Mumbai)" : "ap-south-1",
     // "Asia Pacific (Osaka-Local)" : "ap-northeast-3",
     // "Asia Pacific (Seoul)" : "ap-northeast-2",
     // "Asia Pacific (Singapore)" : "ap-southeast-1",
@@ -34,7 +34,7 @@ const Regeions = {
     // "US West (Oregon)" : "us-west-2"
 }
 
-
+let isFinished = false;
 async function downloadIndexFile(Name, Regeion) {
     console.log("Downloading Index file of " + Name + " in " + Regeion + "regeion");
     const FileURL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/" + Name + "/current/" + Regeion + "/index.json";
@@ -62,21 +62,39 @@ async function createTable(productName, attributes) {
     }
     sql += ", PRIMARY KEY (`id`));";
     // call to execute the query
-    db.executeQuery(sql, null);
-    // console.log(sql);
+    console.log(sql);
+    await db.executeQuery(sql, null);
 }
 
 async function fillProductsTables(productName, products, regeion) {
     // list the attributes
-    const attributes = Object.keys(products[Object.keys(products)[0]].attributes);
+    let attributes = [];
+
+    for (const sku in products) {
+        // if(i > 10) break;
+        // if(attributes.length >= 15) break;
+        if (products.hasOwnProperty(sku)) {
+          const product = products[sku];
+          const productAttributes = product.attributes;
+    
+          for (const attribute in productAttributes) {
+            if (productAttributes.hasOwnProperty(attribute) && !attributes.includes(attribute) && attribute != "group") {
+              attributes.push(attribute);
+              console.log("New attribute found: " + attribute);
+            }
+          }
+        }
+
+    }
+    console.log("Attributes list: " + attributes);
     // create the table if it not exist
     await createTable(productName, attributes);
 
     // insert the products
     for(const key in products) {
-        var sql = "INSERT INTO "+ productName +" (sku, region";
+        var sql = "INSERT INTO "+ productName +" (`sku`, `region`";
         for(const a of attributes) {
-            sql += ", " + a;
+            sql += ", `" + a + "`";
         }
         sql += ") VALUES ('" + key + "', '" + regeion + "'";
         for(const a of attributes) {
@@ -92,8 +110,9 @@ async function fillProductsTables(productName, products, regeion) {
 
         // call to execute the query
         db.executeQuery(sql, null);
-        // console.log(sql);
     }
+
+    console.log("Products table filled");
 }
 
 async function fillTermsTable(terms) {
@@ -112,36 +131,32 @@ async function fillTermsTable(terms) {
         // console.log(`Unit: ${unit}`);
         // console.log(`Price Per Unit (USD): ${pricePerUnitUSD}`);
 
-        var sql = "INSERT INTO terms (`sku`, `offer_term_code`, `unit`, `price_per_unit`, `description`)";
+        var sql = "INSERT INTO `pricing_terms` (`sku`, `offer_term_code`, `unit`, `price_per_unit`, `description`)";
         sql += "VALUES ('" + sku + "', '" + offerTermCode + "', '" + unit + "', '" + pricePerUnitUSD + "', '" + description + "');";
 
         // call to execute the query
         db.executeQuery(sql, null);
-        // console.log(sql);
     }
+    console.log("Terms table filled");
 
 }
 
 for(const regeion in Regeions){
     for(const serviceName in ProductObject){
-        if(!(serviceName == "AmazonS3" || serviceName == "AmazonEC2")){
-            continue;
-        }
+
+        // restricted to only two services for now remove the if condition to download all the services
+        // if(serviceName != "AmazonS3"){
+        //     continue;
+        // }
         downloadIndexFile(serviceName,Regeions[regeion]).then((filePath) => {
             const serviceJson = JSON.parse(fs.readFileSync(path.join(filePath), "utf-8"));
             db.executeQuery("INSERT INTO region_service (`service_code`, `region_code`) VALUES ('" + serviceJson.offerCode + "', '" + Regeions[regeion] + "');", null);
             fillProductsTables(serviceJson.offerCode, serviceJson.products, Regeions[regeion]);
             fillTermsTable(serviceJson.terms.OnDemand);
-            
         });
     }
 }
 
-// wait for 10 seconds to finish the database connection
-setTimeout(() => {
-    process.exit();
-}
-, 15000);
 
 
 

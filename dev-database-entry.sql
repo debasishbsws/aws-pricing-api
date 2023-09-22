@@ -17,12 +17,14 @@ CREATE TABLE IF NOT EXISTS `region_service` (
 );
 
 CREATE TABLE IF NOT EXISTS `pricing_terms` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `sku` VARCHAR(255),
   `offer_term_code` VARCHAR(255),
   `unit` VARCHAR(255),
   `price_per_unit` DECIMAL(12, 10),
   `description` TEXT,
-  PRIMARY KEY (`sku`, `offer_term_code`)
+  PRIMARY KEY (`id`),
+  INDEX `sku` (`sku`)
 );
 
 
